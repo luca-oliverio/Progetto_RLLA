@@ -1,76 +1,52 @@
-#include <cmath>
+#ifndef BOIDS_HPP
+#define BOIDS_HPP
+
 #include <vector>
-namespace bd { // namespace bd
-struct boids
+
+namespace bd {
+
+struct boid
 {
-  double x, y; // parametri della posizione e velocità
+  double x, y;
 };
-struct boids_vel
+
+struct boid_vel
 {
   double v_x, v_y;
-  boids_vel(double a, double b)
-  {
-    v_x = a;
-    v_y = b;
-  }
+  boid_vel(double a = 0.0, double b = 0.0);
+  boid_vel& operator+=(const boid_vel& other);
 };
 
-boids cm(std::vector<boids> b)
-{
-  double sum_x = 0;
-  double sum_y = 0;
-  int n        = b.size();
-  for (const auto& boid : b) {
-    sum_x += boid.x;
-    sum_y += boid.y;
-  }
-  return boids{sum_x / n, sum_y / n};
-};
-// creo una classe di movimento
+boid cm(const std::vector<boid>& b);
+
 class Movement
 {
-  std::vector<boids> b;
+  std::vector<boid> b;
+  std::vector<boid_vel> velocities;
   int n_b;
   double d, d_s, s, a, c;
+  static constexpr double max_speed     = 10.0;
+  static constexpr double screen_width  = 1600.0;
+  static constexpr double screen_height = 900.0;
 
  public:
-  Movement(std::vector<boids> b_, int n_b_, double d_, double d_s_, double s_,
-           double a_, double c_)
-  {
-    b   = b_;
-    n_b = n_b_;
-    d   = d_;
-    d_s = d_s_;
-    s   = s_;
-    a   = a_;
-    c   = c_;
-  };
-  double velocity(boids_vel boid)
-  { // calcolo il modulo della velocità per ogni boid
-    return (sqrt(boid.v_x * boid.v_x + boid.v_y * boid.v_y));
-  }
-  double diff_pos(boids i, boids j)
-  { // calcolo la differenza tra le posizioni dei boid i e j
-    return (sqrt((i.x - j.x) * (i.x - j.x) + (i.y - j.y) * (i.y - j.y)));
-  }
-  boids_vel rule1(boids i, boids j)
-  {
-    if (diff_pos(i, j) < d_s) {
-      return boids_vel(-s * (j.x - i.x), -s * (j.y - i.y));
-    } else
-      return boids_vel(0., 0.);
-  };
-  boids_vel rule2(boids_vel i, boids_vel j)
-  { // a minore di 1, VERIFICA
-    return boids_vel((a / (n_b - 1)) * (j.v_x - i.v_x),
-                     (a / (n_b - 1)) * (j.v_y - i.v_y));
-  };
-  boids_vel rule3(boids i, boids j)
-  {
-    j   = cm(b); // voglio togliere il boid i dal calcolo del centro di massa
-    j.x = (j.x * n_b - i.x) / (n_b - 1);
-    j.y = (j.y * n_b - i.y) / (n_b - 1);
-    return boids_vel(c * (j.x - i.x), c * (j.y - i.y));
-  };
+  Movement(const std::vector<boid>& b_, int n_b_, double d_, double d_s_,
+           double s_, double a_, double c_);
+
+  void update(int frame);
+
+ private:
+  double velocity(const boid_vel& boid) const;
+  double diff_pos(const boid& i, const boid& j) const;
+  boid_vel rule1(const boid& i, const boid& j) const;
+  boid_vel rule2(const boid_vel& i, const boid_vel& j) const;
+  boid_vel rule3(const boid& i, const boid& center_mass) const;
+  void check_bord(boid& i) const;
+  void limit_velocity(boid_vel& v) const;
+  void print_stats(int frame, const std::vector<boid>& b,
+                   const std::vector<boid_vel>& b_vel);
 };
+
 } // namespace bd
+
+#endif // MOVEMENT_HPP
