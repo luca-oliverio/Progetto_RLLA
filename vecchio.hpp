@@ -1,3 +1,6 @@
+#ifndef BOIDSLOGIC_HPP
+#define BOIDSLOGIC_HPP
+
 #include <cmath>
 #include <iostream>
 #include <numeric>
@@ -207,3 +210,4 @@ class Movement
   }
 };
 } // namespace bd
+#endif

@@ -1,7 +1,7 @@
-#include "boids.hpp"
-#include <cmath>
-#include <iostream>
-#include <numeric>
+#ifndef BOIDSLOGIC_CPP
+#define BOIDSLOGIC_CPP
+
+#include "boids_logic.hpp"
 
 namespace bd {
 
@@ -27,8 +27,8 @@ boid cm(const std::vector<boid>& b)
   return {total.x / n, total.y / n};
 }
 
-Movement::Movement(const std::vector<boid>& b_, int n_b_, double d_,
-                   double d_s_, double s_, double a_, double c_)
+Movement::Movement(const std::vector<boid>& b_, int n_b_, double d_, double d_s_,
+                   double s_, double a_, double c_)
     : b(b_)
     , n_b(n_b_)
     , d(d_)
@@ -62,7 +62,8 @@ boid_vel Movement::rule2(const boid_vel& i, const boid_vel& j) const
 {
   if (n_b <= 1)
     return {0., 0.};
-  return {(a / (n_b - 1)) * (j.v_x - i.v_x), (a / (n_b - 1)) * (j.v_y - i.v_y)};
+  return {(a / (n_b - 1)) * (j.v_x - i.v_x),
+          (a / (n_b - 1)) * (j.v_y - i.v_y)};
 }
 
 boid_vel Movement::rule3(const boid& i, const boid& center_mass) const
@@ -104,11 +105,12 @@ void Movement::update(int frame)
   }
 
   std::vector<boid_vel> vel_tot(n_b, boid_vel{0.0, 0.0});
-  boid center        = cm(b);
+  boid center = cm(b);
   double const sum_x = center.x * n_b;
   double const sum_y = center.y * n_b;
   for (int i = 0; i < n_b; ++i) {
-    boid cm_excl = {(sum_x - b[i].x) / (n_b - 1), (sum_y - b[i].y) / (n_b - 1)};
+    boid cm_excl = {(sum_x - b[i].x) / (n_b - 1),
+                    (sum_y - b[i].y) / (n_b - 1)};
     for (int j = 0; j < n_b; ++j) {
       if (i == j)
         continue;
@@ -120,6 +122,7 @@ void Movement::update(int frame)
     vel_tot[i] += rule3(b[i], cm_excl);
     limit_velocity(vel_tot[i]);
   }
+
   for (int i = 0; i < n_b; ++i) {
     b[i].x += vel_tot[i].v_x;
     b[i].y += vel_tot[i].v_y;
@@ -129,6 +132,24 @@ void Movement::update(int frame)
     check_bord(b[i]);
   }
   print_stats(frame, b, velocities);
+}
+
+const std::vector<boid>& Movement::get_boids() const
+{
+  return b;
+}
+
+const std::vector<boid_vel>& Movement::get_velocities() const
+{
+  return velocities;
+}
+
+void Movement::add_velocity(size_t index, double vx, double vy)
+{
+  if (index < velocities.size()) {
+    velocities[index].v_x += vx;
+    velocities[index].v_y += vy;
+  }
 }
 
 void Movement::print_stats(int frame, const std::vector<boid>& b,
@@ -141,8 +162,7 @@ void Movement::print_stats(int frame, const std::vector<boid>& b,
   double total_speed = 0.0;
   std::vector<double> speeds;
   for (int i = 0; i < n; ++i) {
-    double v =
-        std::sqrt(b_vel[i].v_x * b_vel[i].v_x + b_vel[i].v_y * b_vel[i].v_y);
+    double v = std::sqrt(b_vel[i].v_x * b_vel[i].v_x + b_vel[i].v_y * b_vel[i].v_y);
     speeds.push_back(v);
     total_speed += v;
   }
@@ -158,15 +178,15 @@ void Movement::print_stats(int frame, const std::vector<boid>& b,
   std::vector<double> distances;
   for (int i = 0; i < n; ++i) {
     for (int j = i + 1; j < n; ++j) {
-      double dx   = b[i].x - b[j].x;
-      double dy   = b[i].y - b[j].y;
+      double dx = b[i].x - b[j].x;
+      double dy = b[i].y - b[j].y;
       double dist = std::sqrt(dx * dx + dy * dy);
       distances.push_back(dist);
       total_distance += dist;
     }
   }
 
-  int num_pairs        = distances.size();
+  int num_pairs = distances.size();
   double mean_distance = (num_pairs > 0) ? total_distance / num_pairs : 0.0;
 
   double dist_std_dev = 0.0;
@@ -182,4 +202,6 @@ void Movement::print_stats(int frame, const std::vector<boid>& b,
             << " | Dist. media: " << mean_distance
             << " | Dev. std. dist.: " << dist_std_dev << '\n';
 }
+
 } // namespace bd
+#endif
