@@ -52,7 +52,7 @@ int main()
 
   while (window.isOpen()) {
     sf::Event event;
-    bool toggle_mouse_force = false;
+    bool switch_mouse_force = false;
 
     // Gestione eventi
     while (window.pollEvent(event)) {
@@ -69,7 +69,7 @@ int main()
         if (event.mouseButton.button == sf::Mouse::Left)
           is_mouse_pressed = true;
         else if (event.mouseButton.button == sf::Mouse::Right)
-          toggle_mouse_force = true;
+          switch_mouse_force = true;
         break;
 
       case sf::Event::MouseButtonReleased:
@@ -84,7 +84,7 @@ int main()
 
     mov.set_mouse_force(sf::Vector2f(static_cast<float>(mouse_position.x),
                                      static_cast<float>(mouse_position.y)),
-                        is_mouse_pressed, toggle_mouse_force);
+                        is_mouse_pressed, switch_mouse_force);
 
     mov.update(frame);
 

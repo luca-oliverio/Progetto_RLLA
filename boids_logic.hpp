@@ -1,13 +1,17 @@
 #ifndef BOIDS_LOGIC_HPP
 #define BOIDS_LOGIC_HPP
+
+#include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
 #include <numeric>
-#include <SFML/Graphics.hpp>
 #include <vector>
 
 namespace bd {
-
+// costanti che useremo nel codice
+static constexpr double max_speed             = 6.0;
+static constexpr double switch_mouse_forcedth = 1600.0;
+static constexpr double screen_height         = 900.0;
 // Posizione di un boid
 struct Boid
 {
@@ -38,12 +42,8 @@ class Movement
 {
   std::vector<Boid_Complete> boids;
   std::vector<Boid_vel> velocities;
-  int n_b;
+  size_t n_b;
   double d, d_s, s, a, c;
-
-  static constexpr double max_speed     = 6.0;
-  static constexpr double screen_width  = 1600.0;
-  static constexpr double screen_height = 900.0;
 
   sf::Vector2f mouse_pos;
   bool mouse_pressed          = false;
@@ -60,14 +60,14 @@ class Movement
   bool is_neighbor(const Boid& i, const Boid& j) const;
 
   Boid_vel rule1(const Boid& i, const Boid& j) const;
-  Boid_vel rule2(const Boid_vel& i, const Boid_vel& avg_velocity) const;
+  Boid_vel rule2(const Boid_vel& i, const Boid_vel& mean_vel) const;
   Boid_vel rule3(const Boid& i, const Boid& center_mass) const;
 
   static void check_bord(Boid& i);
   static void limit_velocity(Boid_vel& v);
 
   void set_mouse_force(const sf::Vector2f& pos, bool pressed,
-                       bool toggle_mouse_force);
+                       bool switch_mouse_force);
   bool is_mouse_force_active() const;
   double get_mouse_force_radius() const;
 

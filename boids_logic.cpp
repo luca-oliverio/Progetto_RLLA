@@ -32,7 +32,7 @@ Boid cm(const std::vector<Boid>& b)
 Movement::Movement(const std::vector<Boid_Complete>& b_, double d_, double d_s_,
                    double s_, double a_, double c_)
     : boids(b_)
-    , n_b(static_cast<int>(b_.size()))
+    , n_b(b_.size())
     , d(d_)
     , d_s(d_s_)
     , s(s_)
@@ -69,11 +69,11 @@ Boid_vel Movement::rule1(const Boid& i, const Boid& j) const
 }
 
 // Allineamento: avvicina alla velocità media dei vicini
-Boid_vel Movement::rule2(const Boid_vel& i, const Boid_vel& avg_velocity) const
+Boid_vel Movement::rule2(const Boid_vel& i, const Boid_vel& mean_vel) const
 {
   return (n_b <= 1) ? Boid_vel{0.0, 0.0}
-                    : Boid_vel{a * (avg_velocity.v_x - i.v_x),
-                               a * (avg_velocity.v_y - i.v_y)};
+                    : Boid_vel{a * (mean_vel.v_x - i.v_x),
+                               a * (mean_vel.v_y - i.v_y)};
 }
 
 // Coesione: avvicina al centro dei vicini
@@ -85,10 +85,10 @@ Boid_vel Movement::rule3(const Boid& i, const Boid& center_mass) const
 // Controlla i bordi e riposiziona se esce dallo schermo
 void Movement::check_bord(Boid& i)
 {
-  if (i.x >= screen_width)
-    i.x -= screen_width;
+  if (i.x >= switch_mouse_forcedth)
+    i.x -= switch_mouse_forcedth;
   if (i.x < 0)
-    i.x += screen_width;
+    i.x += switch_mouse_forcedth;
   if (i.y >= screen_height)
     i.y -= screen_height;
   if (i.y < 0)
@@ -107,11 +107,11 @@ void Movement::limit_velocity(Boid_vel& v)
 }
 
 void Movement::set_mouse_force(const sf::Vector2f& pos, bool pressed,
-                               bool toggle_mouse_force)
+                               bool switch_mouse_force)
 {
   mouse_pos     = pos;
   mouse_pressed = pressed;
-  if (toggle_mouse_force)
+  if (switch_mouse_force)
     mouse_force_active = !mouse_force_active;
 }
 
@@ -140,13 +140,13 @@ void Movement::update(int frame)
 
   std::vector<Boid_vel> vel_tot = velocities;
 
-  for (int i = 0; i < n_b; ++i) {
+  for (size_t i = 0; i < n_b; ++i) {
     Boid& self = boids[i].b;
     Boid center_mass{0, 0};
-    Boid_vel avg_velocity{0, 0};
+    Boid_vel mean_vel{0, 0};
     int neighbor_count = 0;
 
-    for (int j = 0; j < n_b; ++j) {
+    for (size_t j = 0; j < n_b; ++j) {
       if (i == j)
         continue;
 
@@ -154,7 +154,7 @@ void Movement::update(int frame)
       if (is_neighbor(self, other)) {
         center_mass.x += other.x;
         center_mass.y += other.y;
-        avg_velocity += velocities[j];
+        mean_vel += velocities[j];
         neighbor_count++;
         vel_tot[i] += rule1(self, other); // Separazione
       }
@@ -163,10 +163,10 @@ void Movement::update(int frame)
     if (neighbor_count > 0) {
       center_mass.x /= neighbor_count;
       center_mass.y /= neighbor_count;
-      avg_velocity.v_x /= neighbor_count;
-      avg_velocity.v_y /= neighbor_count;
+      mean_vel.v_x /= neighbor_count;
+      mean_vel.v_y /= neighbor_count;
 
-      vel_tot[i] += rule2(velocities[i], avg_velocity); // Allineamento
+      vel_tot[i] += rule2(velocities[i], mean_vel); // Allineamento
       vel_tot[i] += rule3(self, center_mass);           // Coesione
 
       if (mouse_force_active) {
@@ -190,7 +190,7 @@ void Movement::update(int frame)
     limit_velocity(vel_tot[i]);
   }
 
-  for (int i = 0; i < n_b; ++i) {
+  for (size_t i = 0; i < n_b; ++i) {
     boids[i].b.x += vel_tot[i].v_x;
     boids[i].b.y += vel_tot[i].v_y;
     velocities[i] = vel_tot[i];
@@ -224,23 +224,23 @@ void Movement::print_stats(int frame) const
   std::vector<double> speeds(n_b);
   double total_speed = 0.0;
 
-  for (int i = 0; i < n_b; ++i) {
+  for (size_t i = 0; i < n_b; ++i) {
     double v  = velocity(velocities[i]);
     speeds[i] = v;
     total_speed += v;
   }
-
-  double mean_speed    = total_speed / n_b;
+  double n_b2 = static_cast<double>(n_b);
+  double mean_speed    = total_speed / n_b2;
   double speed_std_dev = 0.0;
-  for (double s : speeds)
-    speed_std_dev += (s - mean_speed) * (s - mean_speed);
-  speed_std_dev = std::sqrt(speed_std_dev / n_b);
+  for (double sp : speeds)
+    speed_std_dev += (sp - mean_speed) * (sp - mean_speed);
+  speed_std_dev = std::sqrt(speed_std_dev / n_b2);
 
   std::vector<double> distances;
   double total_distance = 0.0;
 
-  for (int i = 0; i < n_b; ++i) {
-    for (int j = i + 1; j < n_b; ++j) {
+  for (size_t i = 0; i < n_b; ++i) {
+    for (size_t j = i + 1; j < n_b; ++j) {
       double dx   = boids[i].b.x - boids[j].b.x;
       double dy   = boids[i].b.y - boids[j].b.y;
       double dist = std::sqrt(dx * dx + dy * dy);
@@ -253,8 +253,8 @@ void Movement::print_stats(int frame) const
   double mean_distance = (num_pairs > 0) ? total_distance / num_pairs : 0.0;
 
   double dist_std_dev = 0.0;
-  for (double d : distances)
-    dist_std_dev += (d - mean_distance) * (d - mean_distance);
+  for (double dist : distances)
+    dist_std_dev += (dist - mean_distance) * (dist - mean_distance);
   if (num_pairs > 0)
     dist_std_dev = std::sqrt(dist_std_dev / num_pairs);
 

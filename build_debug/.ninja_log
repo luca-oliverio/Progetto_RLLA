@@ -1,0 +1,7 @@
+# ninja log v5
+0	867	1751551385397867423	CMakeFiles/boids_sim.dir/main.cpp.o	c4c11b6c4f1cd5de
+1	1198	1751551385729490209	CMakeFiles/boids_sim.dir/boids_logic.cpp.o	93de4debbb072b50
+1	1249	1751551385781431127	CMakeFiles/boids_sim.t.dir/boids_logic.cpp.o	7e1e41e40d20c191
+1198	1309	1751551385841362956	boids_sim	6fc706eb03dc3ce8
+1	4931	1751551389453254508	CMakeFiles/boids_sim.t.dir/boids.test.cpp.o	9118f2906100ebf2
+4931	5052	1751551389581109077	boids_sim.t	66ef56483546b8ab
