@@ -13,23 +13,48 @@ int main()
     // Input parametri boids
     std::cout << "Inserisci il numero di boids: ";
     std::cin >> num_boids;
+    if (std::cin.fail() || num_boids < 0) {
+        throw std::invalid_argument("numero di boids non valido");
+    }
 
-    std::cout
-        << "Inserisci la distanza di interazione (d): ";
+    std::cout << "Inserisci la distanza di interazione (d): ";
     std::cin >> d;
+    if (std::cin.fail() || d <= 0) {
+      throw std::invalid_argument(
+          "La distanza di interazione deve essere positiva");
+    }
 
     std::cout << "Inserisci la distanza di separazione (d_s): ";
     std::cin >> d_s;
+    if (std::cin.fail() || d_s <= 0) {
+      throw std::invalid_argument(
+          "La distanza di separazione deve essere positiva");
+    }
+    if (d_s > d) {
+      throw std::invalid_argument("La distanza di separazione non può essere "
+                                  "maggiore della distanza di interazione");
+    }
 
     std::cout << "Inserisci il coefficiente di separazione (s): ";
     std::cin >> s;
+    if (std::cin.fail() || s < 0 || s > 1) {
+      throw std::invalid_argument(
+          "Il coefficiente di separazione deve essere compreso tra 0 e 1");
+    }
 
     std::cout << "Inserisci il coefficiente di allineamento (a): ";
     std::cin >> a;
+    if (std::cin.fail() || a < 0 || a > 1) {
+      throw std::invalid_argument(
+          "Il coefficiente di allineamento deve essere compreso tra 0 e 1");
+    }
 
     std::cout << "Inserisci il coefficiente di coesione (c): ";
     std::cin >> c;
-
+    if (std::cin.fail() || c < 0 || c > 1) {
+      throw std::invalid_argument(
+          "Il coefficiente di coesione deve essere compreso tra 0 e 1");
+    }
     // Inizializzazione boids con posizioni e velocità casuali
     std::vector<bd::Boid_Complete> iniziali;
     iniziali.reserve(static_cast<size_t>(num_boids));
@@ -139,6 +164,10 @@ int main()
     }
 
     return 0;
+  } catch (const std::invalid_argument& e) {
+    std::cerr << "Parametro non valido: " << e.what() << '\n';
+    std::cerr << "Programma terminato.\n";
+    return EXIT_FAILURE;
   } catch (const std::exception& e) {
     std::cerr << "Errore: " << e.what() << '\n';
     return EXIT_FAILURE;
