@@ -18,7 +18,7 @@ TEST_CASE("Test velocity calcolo corretto")
 
 TEST_CASE("Velocity limiting")
 {
-  bd::Boid_vel v{6.0, 8.0}; // modulo = 10
+  bd::Boid_vel v{6.0, 8.0};
   bd::Movement m({}, 0, 0, 0, 0, 0);
   m.limit_velocity(v);
   double expected_mag = m.velocity(v);
@@ -29,7 +29,7 @@ TEST_CASE("Test is_neighbor corretto")
 {
   bd::Movement mov({}, 10.0, 5.0, 0.1, 0.1, 0.1);
   bd::Boid a{0.0, 0.0};
-  bd::Boid b{5.5, 8.0}; // distanza minore di 10
+  bd::Boid b{5.5, 8.0};
   CHECK(mov.is_neighbor(a, b));
   b = {11.0, 0.0};
   CHECK_FALSE(mov.is_neighbor(a, b));
@@ -39,15 +39,15 @@ TEST_CASE("Test rule1 separazione attiva solo se troppo vicini")
 {
   bd::Movement mov({}, 10.0, 5.0, 0.1, 0.1, 0.1);
   bd::Boid a{0.0, 0.0};
-  bd::Boid b{3.0, 4.0}; // distanza 5 -> al limite
+  bd::Boid b{3.0, 4.0};
 
   auto res = mov.rule1(a, b);
   CHECK(res.v_x == doctest::Approx(0.0));
   CHECK(res.v_y == doctest::Approx(0.0));
 
-  b   = {2.0, 2.0}; // distanza < sqrt(5)
+  b   = {2.0, 2.0};
   res = mov.rule1(a, b);
-  CHECK(res.v_x < 0.0); // Deve spingere allontanandosi
+  CHECK(res.v_x < 0.0);
   CHECK(res.v_y < 0.0);
 }
 

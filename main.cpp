@@ -14,7 +14,7 @@ int main()
     std::cout << "Inserisci il numero di boids: ";
     std::cin >> num_boids;
     if (std::cin.fail() || num_boids < 0) {
-        throw std::invalid_argument("numero di boids non valido");
+      throw std::invalid_argument("numero di boids non valido");
     }
 
     std::cout << "Inserisci la distanza di interazione (d): ";
@@ -37,23 +37,23 @@ int main()
 
     std::cout << "Inserisci il coefficiente di separazione (s): ";
     std::cin >> s;
-    if (std::cin.fail() || s < 0 || s > 1) {
+    if (std::cin.fail() || s < 0) {
       throw std::invalid_argument(
-          "Il coefficiente di separazione deve essere compreso tra 0 e 1");
+          "Il coefficiente di separazione deve essere positivo");
     }
 
     std::cout << "Inserisci il coefficiente di allineamento (a): ";
     std::cin >> a;
     if (std::cin.fail() || a < 0 || a > 1) {
-      throw std::invalid_argument(
-          "Il coefficiente di allineamento deve essere compreso tra 0 e 1");
+      throw std::invalid_argument("Il coefficiente di allineamento deve essere "
+                                  "un numero compreso tra 0 e 1");
     }
 
     std::cout << "Inserisci il coefficiente di coesione (c): ";
     std::cin >> c;
     if (std::cin.fail() || c < 0 || c > 1) {
       throw std::invalid_argument(
-          "Il coefficiente di coesione deve essere compreso tra 0 e 1");
+          "Il coefficiente di coesione deve essere un numero positivo");
     }
     // Inizializzazione boids con posizioni e velocità casuali
     std::vector<bd::Boid_Complete> iniziali;
@@ -80,7 +80,7 @@ int main()
       sf::Event event;
       bool switch_mouse_force = false;
 
-      // Gestione eventi
+      // Aggiornamento schermo e boids
       while (window.pollEvent(event)) {
         switch (event.type) {
         case sf::Event::Closed:
@@ -164,7 +164,9 @@ int main()
     }
 
     return 0;
-  } catch (const std::invalid_argument& e) {
+  }
+  // controllo validità parametri
+  catch (const std::invalid_argument& e) {
     std::cerr << "Parametro non valido: " << e.what() << '\n';
     std::cerr << "Programma terminato.\n";
     return EXIT_FAILURE;

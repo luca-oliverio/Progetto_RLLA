@@ -12,6 +12,7 @@ namespace bd {
 static constexpr double max_speed             = 6.0;
 static constexpr double switch_mouse_forcedth = 1600.0;
 static constexpr double screen_height         = 900.0;
+
 // Posizione di un boid
 struct Boid
 {
@@ -27,7 +28,6 @@ struct Boid_vel
   Boid_vel& operator+=(const Boid_vel& other);
 };
 
-// Boid completo di posizione e velocità
 struct Boid_Complete
 {
   Boid b;
@@ -38,6 +38,7 @@ struct Boid_Complete
 // Centro di massa di un insieme di boid
 Boid cm(const std::vector<Boid>& b);
 
+// classe con i metodi che definiscono i movimenti dei boids
 class Movement
 {
   std::vector<Boid_Complete> boids;
@@ -59,6 +60,7 @@ class Movement
   static double diff_pos(const Boid& i, const Boid& j);
   bool is_neighbor(const Boid& i, const Boid& j) const;
 
+  // regole del moto
   Boid_vel rule1(const Boid& i, const Boid& j) const;
   Boid_vel rule2(const Boid_vel& i, const Boid_vel& mean_vel) const;
   Boid_vel rule3(const Boid& i, const Boid& center_mass) const;
@@ -71,7 +73,9 @@ class Movement
   bool is_mouse_force_active() const;
   double get_mouse_force_radius() const;
 
+  // metodo principale
   void update(int frame);
+
   const std::vector<Boid>& get_boids() const;
   const std::vector<Boid_vel>& get_velocities() const;
 
@@ -80,4 +84,4 @@ class Movement
 
 } // namespace bd
 
-#endif // BOIDS_LOGIC_HPP
+#endif

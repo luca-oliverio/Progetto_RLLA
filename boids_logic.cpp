@@ -19,6 +19,7 @@ Boid_Complete::Boid_Complete(const Boid& c, const Boid_vel& d)
     , b_v(d)
 {}
 
+// Centro di massa di un insieme di boid
 Boid cm(const std::vector<Boid>& b)
 {
   Boid total = std::accumulate(b.begin(), b.end(), Boid{0, 0},
@@ -71,9 +72,9 @@ Boid_vel Movement::rule1(const Boid& i, const Boid& j) const
 // Allineamento: avvicina alla velocità media dei vicini
 Boid_vel Movement::rule2(const Boid_vel& i, const Boid_vel& mean_vel) const
 {
-  return (n_b <= 1) ? Boid_vel{0.0, 0.0}
-                    : Boid_vel{a * (mean_vel.v_x - i.v_x),
-                               a * (mean_vel.v_y - i.v_y)};
+  return (n_b <= 1)
+           ? Boid_vel{0.0, 0.0}
+           : Boid_vel{a * (mean_vel.v_x - i.v_x), a * (mean_vel.v_y - i.v_y)};
 }
 
 // Coesione: avvicina al centro dei vicini
@@ -82,7 +83,7 @@ Boid_vel Movement::rule3(const Boid& i, const Boid& center_mass) const
   return {c * (center_mass.x - i.x), c * (center_mass.y - i.y)};
 }
 
-// Controlla i bordi e riposiziona se esce dallo schermo
+// effetto pacman
 void Movement::check_bord(Boid& i)
 {
   if (i.x >= switch_mouse_forcedth)
@@ -95,7 +96,6 @@ void Movement::check_bord(Boid& i)
     i.y += screen_height;
 }
 
-// Limita la velocità massima di un boid
 void Movement::limit_velocity(Boid_vel& v)
 {
   double speed = velocity(v);
@@ -106,6 +106,7 @@ void Movement::limit_velocity(Boid_vel& v)
   }
 }
 
+// interazione puntatore
 void Movement::set_mouse_force(const sf::Vector2f& pos, bool pressed,
                                bool switch_mouse_force)
 {
@@ -125,7 +126,7 @@ double Movement::get_mouse_force_radius() const
   return mouse_force_radius;
 }
 
-// Aggiorna la posizione dei boid ad ogni frame
+// Aggiorna la posizione e la velocità dei boid ad ogni frame
 void Movement::update(int frame)
 {
   if (n_b <= 1) {
@@ -156,7 +157,7 @@ void Movement::update(int frame)
         center_mass.y += other.y;
         mean_vel += velocities[j];
         neighbor_count++;
-        vel_tot[i] += rule1(self, other); // Separazione
+        vel_tot[i] += rule1(self, other);
       }
     }
 
@@ -166,24 +167,23 @@ void Movement::update(int frame)
       mean_vel.v_x /= neighbor_count;
       mean_vel.v_y /= neighbor_count;
 
-      vel_tot[i] += rule2(velocities[i], mean_vel); // Allineamento
-      vel_tot[i] += rule3(self, center_mass);           // Coesione
+      vel_tot[i] += rule2(velocities[i], mean_vel);
+      vel_tot[i] += rule3(self, center_mass);
+    }
+    if (mouse_force_active) {
+      double dx      = mouse_pos.x - self.x;
+      double dy      = mouse_pos.y - self.y;
+      double dist_sq = dx * dx + dy * dy;
 
-      if (mouse_force_active) {
-        double dx      = mouse_pos.x - self.x;
-        double dy      = mouse_pos.y - self.y;
-        double dist_sq = dx * dx + dy * dy;
+      if (dist_sq < mouse_force_radius * mouse_force_radius) {
+        double dist = std::sqrt(dist_sq + 1e-6);
+        double fx   = dx / dist;
+        double fy   = dy / dist;
+        double force =
+            mouse_pressed ? -mouse_force_strength : mouse_force_strength;
 
-        if (dist_sq < mouse_force_radius * mouse_force_radius) {
-          double dist = std::sqrt(dist_sq + 1e-6);
-          double fx   = dx / dist;
-          double fy   = dy / dist;
-          double force =
-              mouse_pressed ? -mouse_force_strength : mouse_force_strength;
-
-          vel_tot[i].v_x += force * fx;
-          vel_tot[i].v_y += force * fy;
-        }
+        vel_tot[i].v_x += force * fx;
+        vel_tot[i].v_y += force * fy;
       }
     }
 
@@ -229,7 +229,7 @@ void Movement::print_stats(int frame) const
     speeds[i] = v;
     total_speed += v;
   }
-  double n_b2 = static_cast<double>(n_b);
+  double n_b2          = static_cast<double>(n_b);
   double mean_speed    = total_speed / n_b2;
   double speed_std_dev = 0.0;
   for (double sp : speeds)
