@@ -86,10 +86,10 @@ Boid_vel Movement::rule3(const Boid& i, const Boid& center_mass) const
 // effetto pacman
 void Movement::check_bord(Boid& i)
 {
-  if (i.x >= switch_mouse_forcedth)
-    i.x -= switch_mouse_forcedth;
+  if (i.x >= screen_width)
+    i.x -= screen_width;
   if (i.x < 0)
-    i.x += switch_mouse_forcedth;
+    i.x += screen_width;
   if (i.y >= screen_height)
     i.y -= screen_height;
   if (i.y < 0)

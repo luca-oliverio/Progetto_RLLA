@@ -10,7 +10,7 @@
 namespace bd {
 // costanti che useremo nel codice
 static constexpr double max_speed             = 6.0;
-static constexpr double switch_mouse_forcedth = 1600.0;
+static constexpr double screen_width = 1600.0;
 static constexpr double screen_height         = 900.0;
 
 // Posizione di un boid
@@ -35,7 +35,6 @@ struct Boid_Complete
   Boid_Complete(const Boid& c, const Boid_vel& d);
 };
 
-// Centro di massa di un insieme di boid
 Boid cm(const std::vector<Boid>& b);
 
 // classe con i metodi che definiscono i movimenti dei boids

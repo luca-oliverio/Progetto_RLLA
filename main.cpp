@@ -6,7 +6,6 @@ int main()
 {
   try {
     std::srand(static_cast<unsigned>(std::time(nullptr))); // Inizializza RNG
-
     int num_boids;
     double d, d_s, s, a, c;
 
