@@ -9,22 +9,23 @@
 
 namespace bd {
 // costanti che useremo nel codice
-static constexpr double max_speed             = 6.0;
-static constexpr double screen_width = 1600.0;
-static constexpr double screen_height         = 900.0;
+constexpr double max_speed     = 6.0;
+constexpr double screen_width  = 1600.0;
+constexpr double screen_height = 900.0;
 
 // Posizione di un boid
 struct Boid
 {
-  double x, y;
+  double x;
+  double y;
 };
 
 // Velocità di un boid
 struct Boid_vel
 {
-  double v_x, v_y;
+  double v_x;
+  double v_y;
   Boid_vel(double a = 0.0, double b = 0.0);
-
   Boid_vel& operator+=(const Boid_vel& other);
 };
 
@@ -43,7 +44,11 @@ class Movement
   std::vector<Boid_Complete> boids;
   std::vector<Boid_vel> velocities;
   size_t n_b;
-  double d, d_s, s, a, c;
+  double d;
+  double d_s;
+  double s;
+  double a;
+  double c;
 
   sf::Vector2f mouse_pos;
   bool mouse_pressed          = false;
