@@ -17,7 +17,7 @@ inline void add_inplace(std::array<double, 2>& i,
 {
   i[0] += other[0];
   i[1] += other[1];
-};
+}
 
 struct Boid
 {
@@ -39,19 +39,18 @@ class Movement
   // vedere se aggiungere inline e confrontare dove mettere constexpr e dove
   // solo const
   sf::Vector2f mouse_pos;
-  bool mouse_pressed                                  = false;
-  bool mouse_force_active                             = true;
-  inline static constexpr int mouse_force_radius      = 80;
-  inline static constexpr double mouse_force_strength = 60;
+  bool mouse_pressed                           = false;
+  bool mouse_force_active                      = true;
+  static constexpr int mouse_force_radius      = 80;
+  static constexpr double mouse_force_strength = 60;
 
   inline static double time_accum = 0.0; // accumulatore del tempo per le stats
-  inline static constexpr double stats_interval =
-      1.0; // ogni quanti secondi stampare
+  static constexpr double stats_interval = 1.0; // ogni quanti secondi stampare
 
  public:
-  inline static constexpr int max_speed     = 700;
-  inline static constexpr int screen_width  = 1600;
-  inline static constexpr int screen_height = 900;
+  static constexpr int max_speed     = 700;
+  static constexpr int screen_width  = 1600;
+  static constexpr int screen_height = 900;
 
   inline void push_back(const Boid& bo)
   {

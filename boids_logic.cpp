@@ -22,7 +22,6 @@ Movement::Movement(const std::vector<Boid>& b_, double d_, double d_s_,
 std::vector<Position> Movement::get_positions() const
 {
   std::vector<Position> boids_positions;
-  boids_positions.reserve(n_b);
   for (const auto& bc : boids)
     boids_positions.push_back(bc.pos);
   return boids_positions;
@@ -30,8 +29,7 @@ std::vector<Position> Movement::get_positions() const
 
 std::vector<Velocity> Movement::get_velocities() const
 {
-  std::vector<Position> boids_velocities;
-  boids_velocities.reserve(n_b);
+  std::vector<Velocity> boids_velocities;
   for (const auto& bc : boids)
     boids_velocities.push_back(bc.vel);
   return boids_velocities;

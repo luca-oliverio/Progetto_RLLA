@@ -7,12 +7,12 @@ int main()
     std::random_device r;
     std::default_random_engine eng{r()};
     std::uniform_real_distribution<double> dist(-1, 1);
-    int n_b;
+    size_t n_b;
     double d, d_s, s, a, c;
     // Input parametri boids
     std::cout << "Inserisci il numero di boids: ";
     std::cin >> n_b;
-    if (std::cin.fail() || n_b < 0) {
+    if (std::cin.fail() || n_b <= 0) {
       throw std::invalid_argument("numero di boids non valido");
     }
 
@@ -56,14 +56,19 @@ int main()
     }
     // Inizializzazione boids con posizioni e velocità casuali
     std::vector<bd::Boid> initials;
-    initials.reserve(static_cast<size_t>(n_b));
-    for (int i = 0; i < n_b; ++i) {
-      const double x  = std::fabs(dist(eng) * (bd::Movement::screen_width));
-      const double y  = std::fabs(dist(eng) * (bd::Movement::screen_height));
-      const double vx = dist(eng) * (bd::Movement::max_speed / sqrt(2));
-      const double vy = dist(eng) * (bd::Movement::max_speed / sqrt(2));
-      initials.emplace_back(bd::Boid{x, y, vx, vy});
+
+    auto random_boid = [&]() {
+      double x  = std::fabs(dist(eng) * bd::Movement::screen_width);
+      double y  = std::fabs(dist(eng) * bd::Movement::screen_height);
+      double vx = dist(eng) * (bd::Movement::max_speed / std::sqrt(2));
+      double vy = dist(eng) * (bd::Movement::max_speed / std::sqrt(2));
+      return bd::Boid{x, y, vx, vy};
+    };
+
+    for (size_t i = 0; i < n_b; ++i) {
+      initials.emplace_back(random_boid());
     }
+
     bd::Movement mov(initials, d, d_s, s, a, c);
     sf::RenderWindow window(sf::VideoMode(1600, 900), "Boids Simulation");
     const int FPS = 90;
@@ -111,11 +116,7 @@ int main()
                           is_mouse_pressed, switch_mouse_force);
       // generatore di boid
       if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-        const double x_  = std::fabs(dist(eng) * (bd::Movement::screen_width));
-        const double y_  = std::fabs(dist(eng) * (bd::Movement::screen_height));
-        const double vx_ = dist(eng) * (bd::Movement::max_speed / sqrt(2));
-        const double vy_ = dist(eng) * (bd::Movement::max_speed / sqrt(2));
-        mov.push_back(bd::Boid{x_, y_, vx_, vy_});
+        mov.push_back(random_boid());
       }
 
       mov.update(frame, dt);

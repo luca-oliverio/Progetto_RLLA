@@ -18,21 +18,47 @@ TEST_CASE("Test diff_pos2")
     bd::Position p2{0.0, 0.0};
     CHECK(mov.diff_pos2(p1, p2) == doctest::Approx(0.0));
   }
+  SUBCASE("Test diff_pos2 with negative coordinates")
+  {
+    bd::Position a{-3.0, -4.0};
+    bd::Position b{0.0, 0.0};
+    CHECK(mov.diff_pos2(a, b) == doctest::Approx(25.0));
+  }
 }
+
 TEST_CASE("Test velocity")
 {
   bd::Movement mov{};
-  bd::Velocity v{3.0, 4.0};
-  CHECK(mov.get_speed(v) == doctest::Approx(5.0));
+  SUBCASE("Normal test")
+  {
+    bd::Velocity v{3.0, 4.0};
+    CHECK(mov.get_speed(v) == doctest::Approx(5.0));
+  }
+
+  SUBCASE("Test get_speed with zero velocity")
+  {
+    bd::Velocity v{0.0, 0.0};
+    CHECK(mov.get_speed(v) == doctest::Approx(0.0));
+  }
 }
 
 TEST_CASE("Velocity limiting")
 {
   bd::Movement mov{};
-  bd::Velocity v{6.0, 8.0};
-  mov.limit_velocity(v);
-  double expected_mag = mov.get_speed(v);
-  CHECK(expected_mag <= bd::Movement::max_speed + 1e-6);
+  SUBCASE("Velocity limiting with high speed")
+  {
+    bd::Velocity v{800.0, 800.0};
+    mov.limit_velocity(v);
+    double expected_mag = mov.get_speed(v);
+    CHECK(expected_mag <= bd::Movement::max_speed + 1e-6);
+  }
+  SUBCASE("Velocity limiting with low speed")
+  {
+    bd::Velocity v{1.0, 1.0};
+    mov.limit_velocity(v);
+    double expected_mag = mov.get_speed(v);
+    CHECK(expected_mag <= bd::Movement::max_speed + 1e-6);
+  }
 }
 
 TEST_CASE("Test is_neighbor correct")
@@ -83,13 +109,33 @@ TEST_CASE("Test rule3 cohesion")
   CHECK(res[1] == doctest::Approx(0.2));
 }
 
-TEST_CASE("Test update with one boid")
+TEST_CASE("Test Update")
 {
-  bd::Boid b{100., 100., 5., 0.};
-  bd::Movement mov({b}, 10.0, 5.0, 0.1, 0.1, 0.1);
-  mov.update(0, 60);
-  auto pos = mov.get_positions()[0];
-  CHECK(pos[0] > 100.0);
+  SUBCASE("Test update with one boid")
+  {
+    bd::Boid b{100., 100., 155., 0.};
+    bd::Movement mov({b}, 100.0, 20.0, 1.5, 0.05, 0.3);
+    mov.update(0, 60);
+    auto pos = mov.get_positions()[0];
+    CHECK(pos[0] > 100.0);
+  }
+  SUBCASE("Update multiple boids and check max speed")
+  {
+    std::vector<bd::Boid> boids = {bd::Boid(0., 0., 10., 0.),
+                                   bd::Boid(5., 5., 0., 10.)};
+    bd::Movement mov(boids, 10.0, 5.0, 0.1, 0.1, 0.1);
+
+    mov.update(0, 1/60 );
+
+    for (auto& pos : mov.get_positions()) {
+      CHECK(pos[0] >= 0.0);
+      CHECK(pos[1] >= 0.0);
+    }
+
+    for (auto& v : mov.get_velocities()) {
+      CHECK(mov.get_speed(v) <= bd::Movement::max_speed + 1e-6);
+    }
+  }
 }
 
 TEST_CASE("add() function")
