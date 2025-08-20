@@ -138,14 +138,12 @@ int main()
         circle.setPosition(static_cast<float>(mouse_position.x),
                            static_cast<float>(mouse_position.y));
 
-        circle.setFillColor(is_mouse_pressed
-                                ? sf::Color(255, 0, 0, 20) 
-                                : sf::Color(0, 255, 0, 20));
+        circle.setFillColor(is_mouse_pressed ? sf::Color(255, 0, 0, 20)
+                                             : sf::Color(0, 255, 0, 20));
 
         circle.setOutlineThickness(3.f);
-        circle.setOutlineColor(is_mouse_pressed
-                                   ? sf::Color(255, 0, 0, 40) 
-                                   : sf::Color(0, 255, 0, 40));
+        circle.setOutlineColor(is_mouse_pressed ? sf::Color(255, 0, 0, 40)
+                                                : sf::Color(0, 255, 0, 40));
 
         window.draw(circle);
       }
@@ -160,7 +158,7 @@ int main()
 
         sf::CircleShape shape(3.f);
 
-        const double speed = std::sqrt(v[0] * v[0] + v[1] * v[1]);
+        const double speed = mov.get_speed(v);
         const double normalized_speed =
             std::min(speed / bd::Movement::max_speed, 1.);
 

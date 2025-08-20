@@ -3,9 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <array>
+#include <cassert>
 #include <iostream>
 #include <vector>
-#include <cassert>
 
 namespace bd {
 
@@ -39,17 +39,17 @@ class Movement
   // vedere se aggiungere inline e confrontare dove mettere constexpr e dove
   // solo const
   sf::Vector2f mouse_pos;
-  bool mouse_pressed                           = false;
-  bool mouse_force_active                      = true;
+  bool mouse_pressed                                  = false;
+  bool mouse_force_active                             = true;
   inline static constexpr int mouse_force_radius      = 80;
   inline static constexpr double mouse_force_strength = 60;
 
   inline static double time_accum = 0.0; // accumulatore del tempo per le stats
-  inline static constexpr double stats_interval = 1.0; // ogni quanti secondi stampare
+  inline static constexpr double stats_interval =
+      1.0; // ogni quanti secondi stampare
 
  public:
-
-  inline static constexpr int max_speed     = 500;
+  inline static constexpr int max_speed     = 700;
   inline static constexpr int screen_width  = 1600;
   inline static constexpr int screen_height = 900;
 
