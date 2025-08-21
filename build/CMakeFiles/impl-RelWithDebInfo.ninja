@@ -217,8 +217,6 @@ build CMakeFiles/boids_sim.dir/RelWithDebInfo/main.cpp.o: CXX_COMPILER__boids_si
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O2 -g -DNDEBUG -std=c++20
   OBJECT_DIR = CMakeFiles/boids_sim.dir/RelWithDebInfo
   OBJECT_FILE_DIR = CMakeFiles/boids_sim.dir/RelWithDebInfo
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.dir/RelWithDebInfo/
-  TARGET_PDB = RelWithDebInfo/boids_sim.pdb
 
 build CMakeFiles/boids_sim.dir/RelWithDebInfo/boids_logic.cpp.o: CXX_COMPILER__boids_sim_unscanned_RelWithDebInfo /home/leandro/università/Progetto_RLLA/boids_logic.cpp || cmake_object_order_depends_target_boids_sim_RELWITHDEBINFO
   DEFINES = -DCMAKE_INTDIR=\"RelWithDebInfo\"
@@ -226,8 +224,6 @@ build CMakeFiles/boids_sim.dir/RelWithDebInfo/boids_logic.cpp.o: CXX_COMPILER__b
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O2 -g -DNDEBUG -std=c++20
   OBJECT_DIR = CMakeFiles/boids_sim.dir/RelWithDebInfo
   OBJECT_FILE_DIR = CMakeFiles/boids_sim.dir/RelWithDebInfo
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.dir/RelWithDebInfo/
-  TARGET_PDB = RelWithDebInfo/boids_sim.pdb
 
 
 # =============================================================================
@@ -243,9 +239,8 @@ build RelWithDebInfo/boids_sim: CXX_EXECUTABLE_LINKER__boids_sim_RelWithDebInfo 
   OBJECT_DIR = CMakeFiles/boids_sim.dir/RelWithDebInfo
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.dir/RelWithDebInfo/
   TARGET_FILE = RelWithDebInfo/boids_sim
-  TARGET_PDB = RelWithDebInfo/boids_sim.pdb
+  TARGET_PDB = boids_sim.dbg
 
 # =============================================================================
 # Object build statements for EXECUTABLE target boids_sim.t
@@ -262,8 +257,6 @@ build CMakeFiles/boids_sim.t.dir/RelWithDebInfo/boids.test.cpp.o: CXX_COMPILER__
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O2 -g -DNDEBUG -std=c++20
   OBJECT_DIR = CMakeFiles/boids_sim.t.dir/RelWithDebInfo
   OBJECT_FILE_DIR = CMakeFiles/boids_sim.t.dir/RelWithDebInfo
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.t.dir/RelWithDebInfo/
-  TARGET_PDB = RelWithDebInfo/boids_sim.t.pdb
 
 build CMakeFiles/boids_sim.t.dir/RelWithDebInfo/boids_logic.cpp.o: CXX_COMPILER__boids_sim.2et_unscanned_RelWithDebInfo /home/leandro/università/Progetto_RLLA/boids_logic.cpp || cmake_object_order_depends_target_boids_sim.t_RELWITHDEBINFO
   DEFINES = -DCMAKE_INTDIR=\"RelWithDebInfo\"
@@ -271,8 +264,6 @@ build CMakeFiles/boids_sim.t.dir/RelWithDebInfo/boids_logic.cpp.o: CXX_COMPILER_
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O2 -g -DNDEBUG -std=c++20
   OBJECT_DIR = CMakeFiles/boids_sim.t.dir/RelWithDebInfo
   OBJECT_FILE_DIR = CMakeFiles/boids_sim.t.dir/RelWithDebInfo
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.t.dir/RelWithDebInfo/
-  TARGET_PDB = RelWithDebInfo/boids_sim.t.pdb
 
 
 # =============================================================================
@@ -282,14 +273,14 @@ build CMakeFiles/boids_sim.t.dir/RelWithDebInfo/boids_logic.cpp.o: CXX_COMPILER_
 #############################################
 # Link the executable RelWithDebInfo/boids_sim.t
 
-build RelWithDebInfo/boids_sim.t: CXX_EXECUTABLE_LINKER__boids_sim.2et_RelWithDebInfo CMakeFiles/boids_sim.t.dir/RelWithDebInfo/boids.test.cpp.o CMakeFiles/boids_sim.t.dir/RelWithDebInfo/boids_logic.cpp.o
+build RelWithDebInfo/boids_sim.t: CXX_EXECUTABLE_LINKER__boids_sim.2et_RelWithDebInfo CMakeFiles/boids_sim.t.dir/RelWithDebInfo/boids.test.cpp.o CMakeFiles/boids_sim.t.dir/RelWithDebInfo/boids_logic.cpp.o | /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1 /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1 /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O2 -g -DNDEBUG
+  LINK_LIBRARIES = /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1
   OBJECT_DIR = CMakeFiles/boids_sim.t.dir/RelWithDebInfo
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.t.dir/RelWithDebInfo/
   TARGET_FILE = RelWithDebInfo/boids_sim.t
-  TARGET_PDB = RelWithDebInfo/boids_sim.t.pdb
+  TARGET_PDB = boids_sim.t.dbg
 
 
 #############################################

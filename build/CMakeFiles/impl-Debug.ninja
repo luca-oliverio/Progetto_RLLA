@@ -217,8 +217,6 @@ build CMakeFiles/boids_sim.dir/Debug/main.cpp.o: CXX_COMPILER__boids_sim_unscann
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -g -fsanitize=address,undefined -std=c++20
   OBJECT_DIR = CMakeFiles/boids_sim.dir/Debug
   OBJECT_FILE_DIR = CMakeFiles/boids_sim.dir/Debug
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.dir/Debug/
-  TARGET_PDB = Debug/boids_sim.pdb
 
 build CMakeFiles/boids_sim.dir/Debug/boids_logic.cpp.o: CXX_COMPILER__boids_sim_unscanned_Debug /home/leandro/università/Progetto_RLLA/boids_logic.cpp || cmake_object_order_depends_target_boids_sim_DEBUG
   DEFINES = -DCMAKE_INTDIR=\"Debug\"
@@ -226,8 +224,6 @@ build CMakeFiles/boids_sim.dir/Debug/boids_logic.cpp.o: CXX_COMPILER__boids_sim_
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -g -fsanitize=address,undefined -std=c++20
   OBJECT_DIR = CMakeFiles/boids_sim.dir/Debug
   OBJECT_FILE_DIR = CMakeFiles/boids_sim.dir/Debug
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.dir/Debug/
-  TARGET_PDB = Debug/boids_sim.pdb
 
 
 # =============================================================================
@@ -244,9 +240,8 @@ build Debug/boids_sim: CXX_EXECUTABLE_LINKER__boids_sim_Debug CMakeFiles/boids_s
   OBJECT_DIR = CMakeFiles/boids_sim.dir/Debug
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.dir/Debug/
   TARGET_FILE = Debug/boids_sim
-  TARGET_PDB = Debug/boids_sim.pdb
+  TARGET_PDB = boids_sim.dbg
 
 # =============================================================================
 # Object build statements for EXECUTABLE target boids_sim.t
@@ -263,8 +258,6 @@ build CMakeFiles/boids_sim.t.dir/Debug/boids.test.cpp.o: CXX_COMPILER__boids_sim
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -g -fsanitize=address,undefined -std=c++20
   OBJECT_DIR = CMakeFiles/boids_sim.t.dir/Debug
   OBJECT_FILE_DIR = CMakeFiles/boids_sim.t.dir/Debug
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.t.dir/Debug/
-  TARGET_PDB = Debug/boids_sim.t.pdb
 
 build CMakeFiles/boids_sim.t.dir/Debug/boids_logic.cpp.o: CXX_COMPILER__boids_sim.2et_unscanned_Debug /home/leandro/università/Progetto_RLLA/boids_logic.cpp || cmake_object_order_depends_target_boids_sim.t_DEBUG
   DEFINES = -DCMAKE_INTDIR=\"Debug\"
@@ -272,8 +265,6 @@ build CMakeFiles/boids_sim.t.dir/Debug/boids_logic.cpp.o: CXX_COMPILER__boids_si
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -g -fsanitize=address,undefined -std=c++20
   OBJECT_DIR = CMakeFiles/boids_sim.t.dir/Debug
   OBJECT_FILE_DIR = CMakeFiles/boids_sim.t.dir/Debug
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.t.dir/Debug/
-  TARGET_PDB = Debug/boids_sim.t.pdb
 
 
 # =============================================================================
@@ -283,15 +274,15 @@ build CMakeFiles/boids_sim.t.dir/Debug/boids_logic.cpp.o: CXX_COMPILER__boids_si
 #############################################
 # Link the executable Debug/boids_sim.t
 
-build Debug/boids_sim.t: CXX_EXECUTABLE_LINKER__boids_sim.2et_Debug CMakeFiles/boids_sim.t.dir/Debug/boids.test.cpp.o CMakeFiles/boids_sim.t.dir/Debug/boids_logic.cpp.o
+build Debug/boids_sim.t: CXX_EXECUTABLE_LINKER__boids_sim.2et_Debug CMakeFiles/boids_sim.t.dir/Debug/boids.test.cpp.o CMakeFiles/boids_sim.t.dir/Debug/boids_logic.cpp.o | /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1 /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1 /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -g -fsanitize=address,undefined
   LINK_FLAGS = -fsanitize=address,undefined
+  LINK_LIBRARIES = /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1  /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1
   OBJECT_DIR = CMakeFiles/boids_sim.t.dir/Debug
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/boids_sim.t.dir/Debug/
   TARGET_FILE = Debug/boids_sim.t
-  TARGET_PDB = Debug/boids_sim.t.pdb
+  TARGET_PDB = boids_sim.t.dbg
 
 
 #############################################

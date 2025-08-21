@@ -40,15 +40,14 @@ find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
 add_executable(boids_sim main.cpp boids_logic.cpp)
 # nel caso si usi SFML. analogamente per eventuali altre librerie
 target_link_libraries(boids_sim PRIVATE sfml-graphics)
-
 # aggiungere eventuali altri eseguibili
-
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 if (BUILD_TESTING)
 
   # aggiungi l'eseguibile progetto.t
   add_executable(boids_sim.t boids.test.cpp boids_logic.cpp)
+  target_link_libraries(boids_sim.t PRIVATE sfml-graphics)
   # aggiungi l'eseguibile progetto.t alla lista dei test
   add_test(NAME boids_sim.t COMMAND boids_sim.t)
 

@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace bd {
-
+using lenght = double;
 using Position = std::array<double, 2>;
 using Velocity = std::array<double, 2>;
 
