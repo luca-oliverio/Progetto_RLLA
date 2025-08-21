@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <array>
-#include <cassert>
 #include <iostream>
 #include <vector>
 
@@ -24,7 +23,8 @@ struct Boid
   Position pos;
   Velocity vel;
   explicit Boid(double x_ = 0, double y_ = 0, double v_x_ = 0, double v_y_ = 0);
-};
+}; // il primo elemento degli array riguarda le coordinate sulle x, il secondo
+   // sulle y
 
 // classe con i metodi che definiscono i movimenti dei boids
 class Movement
@@ -36,8 +36,7 @@ class Movement
   double s;
   double a;
   double c;
-  // vedere se aggiungere inline e confrontare dove mettere constexpr e dove
-  // solo const
+
   sf::Vector2f mouse_pos;
   bool mouse_pressed                           = false;
   bool mouse_force_active                      = true;
@@ -52,15 +51,12 @@ class Movement
   static constexpr int screen_width  = 1600;
   static constexpr int screen_height = 900;
 
-  inline void push_back(const Boid& bo)
-  {
-    boids.push_back(bo);
-    ++n_b;
-    assert(n_b == boids.size());
-  }
-
   Movement(const std::vector<Boid>& b_ = {}, double d_ = 0, double d_s_ = 0,
            double s_ = 0, double a_ = 0, double c_ = 0);
+
+  void push_back_(const Boid& bo);
+  void erase_();
+
   std::vector<Position> get_positions() const;
   std::vector<Velocity> get_velocities() const;
   double get_speed(const Velocity& vel) const;
@@ -81,15 +77,21 @@ class Movement
   {
     return mouse_force_active;
   }
-  inline double get_mouse_force_radius() const
-  {
-    return mouse_force_radius;
-  }
 
+  void time_stats(const int frame, const double dt);
   // metodo principale
+
+  void apply_neighbor_rules(size_t i, Velocity& v);
+  void apply_mouse_force(const Boid& self, Velocity& v);
+  void update_pos_vel(std::vector<Velocity>& vel_tot, double dt);
+
   void update(int frame, double dt);
 
   void print_stats(int frame) const;
+
+  static void draw_mouse(const sf::Vector2i& mouse_position,
+                         const bool is_mouse_pressed, sf::RenderWindow& window);
+  void draw_boids(const Position& p,const Velocity& v, sf::RenderWindow& window) const;
 };
 
 } // namespace bd

@@ -12,7 +12,7 @@ int main()
     // Input parametri boids
     std::cout << "Inserisci il numero di boids: ";
     std::cin >> n_b;
-    if (std::cin.fail() || n_b <= 0) {
+    if (std::cin.fail()) {
       throw std::invalid_argument("numero di boids non valido");
     }
 
@@ -57,7 +57,7 @@ int main()
     // Inizializzazione boids con posizioni e velocità casuali
     std::vector<bd::Boid> initials;
 
-    auto random_boid = [&]() {
+    auto random_boid = [&dist, &eng]() {
       double x  = std::fabs(dist(eng) * bd::Movement::screen_width);
       double y  = std::fabs(dist(eng) * bd::Movement::screen_height);
       double vx = dist(eng) * (bd::Movement::max_speed / std::sqrt(2));
@@ -70,7 +70,9 @@ int main()
     }
 
     bd::Movement mov(initials, d, d_s, s, a, c);
-    sf::RenderWindow window(sf::VideoMode(1600, 900), "Boids Simulation");
+    sf::RenderWindow window(
+        sf::VideoMode(bd::Movement::screen_width, bd::Movement::screen_height),
+        "Boids Simulation");
     const int FPS = 90;
     window.setFramerateLimit(FPS);
 
@@ -114,9 +116,16 @@ int main()
       mov.set_mouse_force(sf::Vector2f(static_cast<float>(mouse_position.x),
                                        static_cast<float>(mouse_position.y)),
                           is_mouse_pressed, switch_mouse_force);
-      // generatore di boid
+
+      // generatore di boids
       if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-        mov.push_back(random_boid());
+        mov.push_back_(random_boid());
+      }
+      // rimuove i boids
+      if (mov.get_positions().empty() == false) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+          mov.erase_();
+        }
       }
 
       mov.update(frame, dt);
@@ -133,20 +142,7 @@ int main()
 
       // Disegna il raggio della forza del mouse se attiva
       if (mov.is_mouse_force_active() && mouse_in_window) {
-        const float radius = static_cast<float>(mov.get_mouse_force_radius());
-        sf::CircleShape circle(radius);
-        circle.setOrigin(radius, radius);
-        circle.setPosition(static_cast<float>(mouse_position.x),
-                           static_cast<float>(mouse_position.y));
-
-        circle.setFillColor(is_mouse_pressed ? sf::Color(255, 0, 0, 20)
-                                             : sf::Color(0, 255, 0, 20));
-
-        circle.setOutlineThickness(3.f);
-        circle.setOutlineColor(is_mouse_pressed ? sf::Color(255, 0, 0, 40)
-                                                : sf::Color(0, 255, 0, 40));
-
-        window.draw(circle);
+        mov.draw_mouse(mouse_position, is_mouse_pressed, window);
       }
 
       // Disegna ogni boid con colore in base alla velocità
@@ -156,21 +152,7 @@ int main()
       for (std::size_t i = 0; i < positions.size(); ++i) {
         const bd::Position& p = positions[i];
         const bd::Position& v = velocities[i];
-
-        sf::CircleShape shape(3.f);
-
-        const double speed = mov.get_speed(v);
-        const double normalized_speed =
-            std::min(speed / bd::Movement::max_speed, 1.);
-
-        const sf::Uint8 red = 255;
-        const sf::Uint8 green =
-            static_cast<sf::Uint8>(255 * (1. - normalized_speed));
-        const sf::Uint8 blue = green;
-
-        shape.setFillColor(sf::Color(red, green, blue));
-        shape.setPosition(static_cast<float>(p[0]), static_cast<float>(p[1]));
-        window.draw(shape);
+        mov.draw_boids(p, v, window);
       }
 
       window.display();
