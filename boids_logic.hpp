@@ -81,8 +81,8 @@ class Movement
   void time_stats(const int frame, const double dt);
   // metodo principale
 
-  void apply_neighbor_rules(size_t i, Velocity& v);
-  void apply_mouse_force(const Boid& self, Velocity& v);
+  void apply_neighbor_rules(size_t i, Velocity& v_i);
+  void apply_mouse_force(const Boid& self, Velocity& v_i);
   void update_pos_vel(std::vector<Velocity>& vel_tot, double dt);
 
   void update(int frame, double dt);

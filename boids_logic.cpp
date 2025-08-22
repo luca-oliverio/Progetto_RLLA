@@ -110,7 +110,6 @@ void Movement::limit_velocity(Velocity& v)
     v[1] *= scale;
   }
 }
-
 // interazione puntatore
 void Movement::set_mouse_force(const sf::Vector2f& pos, bool pressed,
                                bool switch_mouse_force)
@@ -120,6 +119,7 @@ void Movement::set_mouse_force(const sf::Vector2f& pos, bool pressed,
   if (switch_mouse_force)
     mouse_force_active = !mouse_force_active;
 }
+
 void Movement::time_stats(const int frame, const double dt)
 {
   time_accum += dt;
@@ -129,7 +129,7 @@ void Movement::time_stats(const int frame, const double dt)
   }
 }
 // Calcola le regole basate sui vicini e aggiorna la velocità
-void Movement::apply_neighbor_rules(size_t i, Velocity& v)
+void Movement::apply_neighbor_rules(size_t i, Velocity& v_i)
 {
   Boid& self = boids[i];
   Position center_mass{};
@@ -146,7 +146,7 @@ void Movement::apply_neighbor_rules(size_t i, Velocity& v)
       mean_vel[0] += other.vel[0];
       mean_vel[1] += other.vel[1];
       neighbor_count++;
-      add_inplace(v, rule1(self.pos, other.pos));
+      add_inplace(v_i, rule1(self.pos, other.pos));
     }
   }
   // Applica regole 2 e 3 se ci sono vicini
@@ -156,12 +156,12 @@ void Movement::apply_neighbor_rules(size_t i, Velocity& v)
     mean_vel[0] /= neighbor_count;
     mean_vel[1] /= neighbor_count;
 
-    add_inplace(v, rule2(self.vel, mean_vel));
-    add_inplace(v, rule3(self.pos, center_mass));
+    add_inplace(v_i, rule2(self.vel, mean_vel));
+    add_inplace(v_i, rule3(self.pos, center_mass));
   }
 }
 // Applica la forza del mouse (attrattiva o repulsiva)
-void Movement::apply_mouse_force(const Boid& self, Velocity& v)
+void Movement::apply_mouse_force(const Boid& self, Velocity& v_i)
 {
   if (!mouse_force_active)
     return;
@@ -176,8 +176,8 @@ void Movement::apply_mouse_force(const Boid& self, Velocity& v)
     double fy    = dy / dist;
     double force = mouse_pressed ? -mouse_force_strength : mouse_force_strength;
 
-    v[0] += force * fx;
-    v[1] += force * fy;
+    v_i[0] += force * fx;
+    v_i[1] += force * fy;
   }
 }
 // Aggiorna posizione e velocità dei boid
@@ -203,9 +203,8 @@ void Movement::update(int frame, double dt)
   std::vector<Velocity> vel_tot = get_velocities();
 
   for (size_t i = 0; i < n_b; ++i) {
-    Boid& self = boids[i];
     apply_neighbor_rules(i, vel_tot[i]);
-    apply_mouse_force(self, vel_tot[i]);
+    apply_mouse_force(boids[i], vel_tot[i]);
     limit_velocity(vel_tot[i]);
   }
 
@@ -283,7 +282,8 @@ void Movement::draw_mouse(const sf::Vector2i& mouse_position,
   window.draw(circle);
 }
 
-void Movement::draw_boids(const Position& p,const Velocity& v, sf::RenderWindow& window) const
+void Movement::draw_boids(const Position& p, const Velocity& v,
+                          sf::RenderWindow& window) const
 {
   sf::CircleShape shape(3.f);
 
