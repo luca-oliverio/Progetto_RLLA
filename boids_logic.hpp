@@ -3,11 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <array>
-#include <iostream>
 #include <vector>
 
 namespace bd {
-using lenght = double;
 using Position = std::array<double, 2>;
 using Velocity = std::array<double, 2>;
 
@@ -38,37 +36,38 @@ class Movement
   double c;
 
   sf::Vector2f mouse_pos;
-  bool mouse_pressed                           = false;
-  bool mouse_force_active                      = true;
+  inline static bool mouse_pressed             = false;
+  inline static bool mouse_force_active        = false;
   static constexpr int mouse_force_radius      = 80;
-  static constexpr double mouse_force_strength = 60;
+  static constexpr double mouse_force_strength = 40;
 
-  inline static double time_accum = 0.0; // accumulatore del tempo per le stats
+  inline static double time_accum        = 0.0;
   static constexpr double stats_interval = 1.0; // ogni quanti secondi stampare
 
  public:
   static constexpr int max_speed     = 700;
   static constexpr int screen_width  = 1600;
   static constexpr int screen_height = 900;
+  static constexpr int edge        = 30;
 
-  Movement(const std::vector<Boid>& b_ = {}, double d_ = 0, double d_s_ = 0,
-           double s_ = 0, double a_ = 0, double c_ = 0);
+  explicit Movement(const std::vector<Boid>& b_ = {}, double d_ = 0,
+                    double d_s_ = 0, double s_ = 0, double a_ = 0,
+                    double c_ = 0);
 
   void push_back_(const Boid& bo);
-  void erase_();
+  void remove_();
 
-  std::vector<Position> get_positions() const;
-  std::vector<Velocity> get_velocities() const;
+  const std::vector<Boid>& get_boids() const;
   double get_speed(const Velocity& vel) const;
   double diff_pos2(const Position& pos_i, const Position& pos_j) const;
   bool is_neighbor(const Position& pos_i, const Position& pos_j) const;
 
   // regole del moto
   Velocity rule1(const Position& pos_i, const Position& pos_j) const;
-  Velocity rule2(const Velocity& i, const Velocity& mean_vel) const;
-  Velocity rule3(const Position& i, const Position& center_mass) const;
+  Velocity rule2(const Velocity& vel_i, const Velocity& mean_vel) const;
+  Velocity rule3(const Position& vel_i, const Position& center_mass) const;
 
-  void check_bord(Position& i);
+  void check_sides(Position& i);
   void limit_velocity(Velocity& v);
 
   void set_mouse_force(const sf::Vector2f& pos, bool pressed,
@@ -78,20 +77,21 @@ class Movement
     return mouse_force_active;
   }
 
-  void time_stats(const int frame, const double dt);
-  // metodo principale
-
   void apply_neighbor_rules(size_t i, Velocity& v_i);
   void apply_mouse_force(const Boid& self, Velocity& v_i);
   void update_pos_vel(std::vector<Velocity>& vel_tot, double dt);
 
+  void time_stats(const int frame, const double dt);
+
+  // metodo principale
   void update(int frame, double dt);
 
   void print_stats(int frame) const;
 
   static void draw_mouse(const sf::Vector2i& mouse_position,
                          const bool is_mouse_pressed, sf::RenderWindow& window);
-  void draw_boids(const Position& p,const Velocity& v, sf::RenderWindow& window) const;
+  void draw_boids(const Position& p, const Velocity& v,
+                  sf::RenderWindow& window) const;
 };
 
 } // namespace bd

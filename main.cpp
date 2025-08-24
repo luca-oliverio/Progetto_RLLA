@@ -1,4 +1,5 @@
 #include "boids_logic.hpp"
+#include <iostream>
 #include <random>
 
 int main()
@@ -7,9 +8,9 @@ int main()
     std::random_device r;
     std::default_random_engine eng{r()};
     std::uniform_real_distribution<double> dist(-1, 1);
+    // Input parametri boids
     size_t n_b;
     double d, d_s, s, a, c;
-    // Input parametri boids
     std::cout << "Inserisci il numero di boids: ";
     std::cin >> n_b;
     if (std::cin.fail()) {
@@ -52,7 +53,7 @@ int main()
     std::cin >> c;
     if (std::cin.fail() || c < 0 || c > 1) {
       throw std::invalid_argument(
-          "Il coefficiente di coesione deve essere un numero positivo");
+          "Il coefficiente di coesione deve essere compreso tra 0 e 1");
     }
     // Inizializzazione boids con posizioni e velocità casuali
     std::vector<bd::Boid> initials;
@@ -78,10 +79,9 @@ int main()
 
     sf::Vector2i mouse_position;
     bool is_mouse_pressed = false;
-    int frame             = 0;
-    double dt             = (1. / FPS);
+    const double dt       = (1. / FPS);
 
-    while (window.isOpen()) {
+    for (int frame = 0; window.isOpen(); ++frame) {
       sf::Event event;
       bool switch_mouse_force = false;
 
@@ -122,10 +122,8 @@ int main()
         mov.push_back_(random_boid());
       }
       // rimuove i boids
-      if (mov.get_positions().empty() == false) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
-          mov.erase_();
-        }
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+        mov.remove_();
       }
 
       mov.update(frame, dt);
@@ -133,12 +131,13 @@ int main()
       window.clear(sf::Color::Black);
 
       // Verifica se il mouse è visivamente dentro la finestra
-      static constexpr int margin = 30;
       const bool mouse_in_window =
-          mouse_position.x >= margin
-          && mouse_position.x <= (bd::Movement::screen_width - margin)
-          && mouse_position.y >= margin
-          && mouse_position.y <= (bd::Movement::screen_height - margin);
+          mouse_position.x >= bd::Movement::edge
+          && mouse_position.x
+                 <= (bd::Movement::screen_width - bd::Movement::edge)
+          && mouse_position.y >= bd::Movement::edge
+          && mouse_position.y
+                 <= (bd::Movement::screen_height - bd::Movement::edge);
 
       // Disegna il raggio della forza del mouse se attiva
       if (mov.is_mouse_force_active() && mouse_in_window) {
@@ -146,17 +145,11 @@ int main()
       }
 
       // Disegna ogni boid con colore in base alla velocità
-      const std::vector<bd::Position>& positions  = mov.get_positions();
-      const std::vector<bd::Velocity>& velocities = mov.get_velocities();
-
-      for (std::size_t i = 0; i < positions.size(); ++i) {
-        const bd::Position& p = positions[i];
-        const bd::Position& v = velocities[i];
-        mov.draw_boids(p, v, window);
+      for (const bd::Boid& b : mov.get_boids()) {
+        mov.draw_boids(b.pos, b.vel, window);
       }
 
       window.display();
-      ++frame;
     }
     return 0;
   }

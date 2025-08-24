@@ -1,6 +1,7 @@
 #include "boids_logic.hpp"
 #include <cassert>
 #include <cmath>
+#include <iostream>
 
 namespace bd {
 
@@ -27,29 +28,20 @@ void Movement::push_back_(const Boid& bo)
   assert(n_b == boids.size());
 }
 // rimuovi un boid
-void Movement::erase_()
+void Movement::remove_()
 {
-  auto it = boids.end() - 1;
-  boids.erase(it);
-  --n_b;
-  assert(n_b == boids.size());
+  if (boids.empty() == false) {
+    auto it = boids.end() - 1;
+    boids.erase(it);
+    --n_b;
+    assert(n_b == boids.size());
+  }
 }
 
-std::vector<Position> Movement::get_positions() const
+const std::vector<Boid>& Movement::get_boids() const
 {
-  std::vector<Position> boids_positions;
-  for (const auto& bc : boids)
-    boids_positions.push_back(bc.pos);
-  return boids_positions;
-}
-
-std::vector<Velocity> Movement::get_velocities() const
-{
-  std::vector<Velocity> boids_velocities;
-  for (const auto& bc : boids)
-    boids_velocities.push_back(bc.vel);
-  return boids_velocities;
-}
+  return boids;
+};
 
 double Movement::get_speed(const Velocity& vel) const
 {
@@ -60,7 +52,7 @@ double Movement::diff_pos2(const Position& pos_i, const Position& pos_j) const
 {
   return (pos_i[0] - pos_j[0]) * (pos_i[0] - pos_j[0])
        + (pos_i[1] - pos_j[1]) * (pos_i[1] - pos_j[1]);
-}
+} // evitiamo di fare la radice per ottimizzare
 
 bool Movement::is_neighbor(const Position& pos_i, const Position& pos_j) const
 {
@@ -77,19 +69,20 @@ Velocity Movement::rule1(const Position& pos_i, const Position& pos_j) const
 }
 
 // Allineamento: avvicina alla velocità media dei vicini
-Velocity Movement::rule2(const Velocity& i, const Velocity& mean_vel) const
+Velocity Movement::rule2(const Velocity& vel_i, const Velocity& mean_vel) const
 {
-  return Velocity{a * (mean_vel[0] - i[0]), a * (mean_vel[1] - i[1])};
+  return Velocity{a * (mean_vel[0] - vel_i[0]), a * (mean_vel[1] - vel_i[1])};
 }
 
 // Coesione: avvicina al centro dei vicini
-Velocity Movement::rule3(const Position& i, const Position& center_mass) const
+Velocity Movement::rule3(const Position& pos_i,
+                         const Position& center_mass) const
 {
-  return {c * (center_mass[0] - i[0]), c * (center_mass[1] - i[1])};
+  return {c * (center_mass[0] - pos_i[0]), c * (center_mass[1] - pos_i[1])};
 }
 
 // effetto pacman
-void Movement::check_bord(Position& i)
+void Movement::check_sides(Position& i)
 {
   if (i[0] >= screen_width)
     i[0] -= screen_width;
@@ -110,7 +103,7 @@ void Movement::limit_velocity(Velocity& v)
     v[1] *= scale;
   }
 }
-// interazione puntatore
+// aggiorna l'interazione col puntatore
 void Movement::set_mouse_force(const sf::Vector2f& pos, bool pressed,
                                bool switch_mouse_force)
 {
@@ -128,6 +121,7 @@ void Movement::time_stats(const int frame, const double dt)
     time_accum -= (stats_interval);
   }
 }
+
 // Calcola le regole basate sui vicini e aggiorna la velocità
 void Movement::apply_neighbor_rules(size_t i, Velocity& v_i)
 {
@@ -187,7 +181,7 @@ void Movement::update_pos_vel(std::vector<Velocity>& vel_tot, double dt)
     boids[i].pos[0] += vel_tot[i][0] * dt;
     boids[i].pos[1] += vel_tot[i][1] * dt;
     boids[i].vel = vel_tot[i];
-    check_bord(boids[i].pos);
+    check_sides(boids[i].pos);
   }
 }
 
@@ -200,7 +194,9 @@ void Movement::update(int frame, double dt)
     return;
   }
 
-  std::vector<Velocity> vel_tot = get_velocities();
+  std::vector<Velocity> vel_tot;
+  for (const auto& bc : boids)
+    vel_tot.push_back(bc.vel);
 
   for (size_t i = 0; i < n_b; ++i) {
     apply_neighbor_rules(i, vel_tot[i]);
@@ -213,7 +209,7 @@ void Movement::update(int frame, double dt)
 }
 
 // Stampa alcune statistiche (velocità media, distanza media, deviazione
-// standard)
+// standard e numero di boids)
 void Movement::print_stats(int frame) const
 {
   if (n_b < 2)
@@ -262,7 +258,7 @@ void Movement::print_stats(int frame) const
             << " | Dev. std. dist.: " << dist_std_dev << " | N_b: " << n_b
             << '\n';
 }
-
+// metodi riguardanti la grafica
 void Movement::draw_mouse(const sf::Vector2i& mouse_position,
                           const bool is_mouse_pressed, sf::RenderWindow& window)
 {

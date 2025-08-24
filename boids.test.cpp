@@ -21,10 +21,10 @@ TEST_CASE("Test push_back_ and erase_")
     bd::Boid b{1.0, 2.0, 0.5, 0.5};
     mov.push_back_(b);
 
-    auto positions = mov.get_positions();
-    CHECK(positions.size() == 1);
-    CHECK(positions[0][0] == doctest::Approx(1.0));
-    CHECK(positions[0][1] == doctest::Approx(2.0));
+    auto boids = mov.get_boids();
+    CHECK(boids.size() == 1);
+    CHECK(boids[0].pos[0] == doctest::Approx(1.0));
+    CHECK(boids[0].pos[1] == doctest::Approx(2.0));
   }
 
   SUBCASE("erase_ removes the last boid")
@@ -34,17 +34,17 @@ TEST_CASE("Test push_back_ and erase_")
 
     mov.push_back_(b1);
     mov.push_back_(b2);
-    CHECK(mov.get_positions().size() == 2);
+    CHECK(mov.get_boids().size() == 2);
 
-    mov.erase_();
-    auto positions = mov.get_positions();
-    CHECK(positions.size() == 1);
-    CHECK(positions[0][0] == doctest::Approx(0.0));
-    CHECK(positions[0][1] == doctest::Approx(0.0));
+    mov.remove_();
+    auto boids = mov.get_boids();
+    CHECK(boids.size() == 1);
+    CHECK(boids[0].pos[0] == doctest::Approx(0.0));
+    CHECK(boids[0].pos[1] == doctest::Approx(0.0));
   }
 }
 
-TEST_CASE("Test velocity")
+TEST_CASE("Test get_speed")
 {
   bd::Movement mov{};
   SUBCASE("Normal test")
@@ -68,7 +68,7 @@ TEST_CASE("Test velocity")
 TEST_CASE("Test diff_pos2")
 {
   bd::Movement mov{};
-  SUBCASE("Different positions")
+  SUBCASE("Different positions ^2")
   {
     bd::Position a{0.0, 0.0};
     bd::Position b{3.0, 4.0};
@@ -86,6 +86,15 @@ TEST_CASE("Test diff_pos2")
     bd::Position b{0.0, 0.0};
     CHECK(mov.diff_pos2(a, b) == doctest::Approx(25.0));
   }
+}
+
+TEST_CASE("Verify check_sides")
+{
+  bd::Movement mov{};
+  bd::Position p = {-5.0, 200.0};
+  mov.check_sides(p);
+  CHECK(p[0] >= 0);
+  CHECK(p[1] < mov.screen_width);
 }
 
 TEST_CASE("Velocity limiting")
@@ -197,7 +206,7 @@ TEST_CASE("Test apply_mouse_force")
 
   SUBCASE("Test apply_mouse_force attractive")
   {
-    mov.set_mouse_force({800, 450}, false, false);
+    mov.set_mouse_force({800, 450}, false, true);
     bd::Velocity v = b.vel;
     mov.apply_mouse_force(b, v);
 
@@ -229,11 +238,11 @@ TEST_CASE("Test update_pos_vel basic movement")
   std::vector<bd::Velocity> vel_tot = {{300.0, 250.0}};
   mov.update_pos_vel(vel_tot, 0.01);
 
-  auto pos = mov.get_positions()[0];
+  auto pos = mov.get_boids()[0].pos;
   CHECK(pos[0] == doctest::Approx(3.0));
   CHECK(pos[1] == doctest::Approx(2.5));
 
-  auto vel = mov.get_velocities()[0];
+  auto vel = mov.get_boids()[0].vel;
   CHECK(vel[0] == doctest::Approx(300.0));
   CHECK(vel[1] == doctest::Approx(250.0));
 }
@@ -245,7 +254,7 @@ TEST_CASE("Test Update")
     bd::Boid b{100., 100., 155., 0.};
     bd::Movement mov({b}, 100., 20., 1.5, 0.04, 0.3);
     mov.update(0, 0.017);
-    auto pos = mov.get_positions()[0];
+    auto pos = mov.get_boids()[0].pos;
     CHECK(pos[0] > 100.0);
   }
   SUBCASE("Update multiple boids and check max speed")
@@ -256,13 +265,10 @@ TEST_CASE("Test Update")
 
     mov.update(0, 0.017);
 
-    for (auto& pos : mov.get_positions()) {
-      CHECK(pos[0] >= 0.);
-      CHECK(pos[1] >= 0.);
-    }
-
-    for (auto& v : mov.get_velocities()) {
-      CHECK(mov.get_speed(v) <= bd::Movement::max_speed + 1e-6);
+    for (auto& bo : mov.get_boids()) {
+      CHECK(bo.pos[0] >= 0.);
+      CHECK(bo.pos[1] >= 0.);
+      CHECK(mov.get_speed(bo.vel) <= bd::Movement::max_speed + 1e-6);
     }
   }
 }
